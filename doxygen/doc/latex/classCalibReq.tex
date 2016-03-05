@@ -1,0 +1,75 @@
+\section{Calib\+Req Class Reference}
+\label{classCalibReq}\index{Calib\+Req@{Calib\+Req}}
+
+
+\mbox{\hyperlink{classCalibReq}{Calib\+Req}} I\+DL structure to send/receive points.  
+
+
+
+
+{\ttfamily \#include $<$Calib\+Req.\+h$>$}
+
+
+
+Inherits Wire\+Portable.
+
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\label{classCalibReq_a4df421184d5b6cbbabdb33e3a32f639b}} 
+typedef yarp\+::os\+::idl\+::\+Unwrapped$<$ \mbox{\hyperlink{classCalibReq}{Calib\+Req}} $>$ {\bfseries unwrapped}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\label{classCalibReq_a1af14762d3a28741137237b519488b48}} 
+{\bfseries Calib\+Req} (const std\+::string \&\mbox{\hyperlink{classCalibReq_a02f03036d32f28fad1c1e533a139e75f}{result}}, const double \mbox{\hyperlink{classCalibReq_ac264bcfec43ddba85a4570920ec74ba0}{x}}, const double \mbox{\hyperlink{classCalibReq_a5f335f445b573d868c1f2b900b029db4}{y}}, const double \mbox{\hyperlink{classCalibReq_afe51cdf867f132c03e84ff5eec91a4d3}{z}})
+\item 
+\mbox{\label{classCalibReq_ac6703f948afe8290c2cd7dbf93059534}} 
+{\bfseries Calib\+Req} (const \mbox{\hyperlink{classCalibReq}{Calib\+Req}} \&\+\_\+\+\_\+alt)
+\item 
+\mbox{\label{classCalibReq_a889eaa2b28d98083116e440ab5ea2cbd}} 
+const \mbox{\hyperlink{classCalibReq}{Calib\+Req}} \& {\bfseries operator=} (const \mbox{\hyperlink{classCalibReq}{Calib\+Req}} \&\+\_\+\+\_\+alt)
+\item 
+\mbox{\label{classCalibReq_a70c79bda911a711ad20ee49e826801a0}} 
+bool {\bfseries read} (yarp\+::os\+::idl\+::\+Wire\+Reader \&reader) override
+\item 
+\mbox{\label{classCalibReq_a3ed976c68bbeb9b9ae8285957abdeec5}} 
+bool {\bfseries read} (yarp\+::os\+::\+Connection\+Reader \&connection) override
+\item 
+\mbox{\label{classCalibReq_aa68a5d0b67c1280f65ac2e071f1d02ee}} 
+bool {\bfseries write} (const yarp\+::os\+::idl\+::\+Wire\+Writer \&writer) const override
+\item 
+\mbox{\label{classCalibReq_a0bc4e80ab7d893c9a6ca237c068ecd83}} 
+bool {\bfseries write} (yarp\+::os\+::\+Connection\+Writer \&connection) const override
+\item 
+\mbox{\label{classCalibReq_a3cb80fc9efd2d48253297e26967176c6}} 
+std\+::string {\bfseries to\+String} () const
+\end{DoxyCompactItemize}
+\subsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\label{classCalibReq_a02f03036d32f28fad1c1e533a139e75f}} 
+std\+::string \mbox{\hyperlink{classCalibReq_a02f03036d32f28fad1c1e533a139e75f}{result}}
+\begin{DoxyCompactList}\small\item\em contain \mbox{[}ok\mbox{]}/\mbox{[}fail\mbox{]} on success/failure. \end{DoxyCompactList}\item 
+\mbox{\label{classCalibReq_ac264bcfec43ddba85a4570920ec74ba0}} 
+double \mbox{\hyperlink{classCalibReq_ac264bcfec43ddba85a4570920ec74ba0}{x}}
+\begin{DoxyCompactList}\small\item\em the x-\/coordinate. \end{DoxyCompactList}\item 
+\mbox{\label{classCalibReq_a5f335f445b573d868c1f2b900b029db4}} 
+double \mbox{\hyperlink{classCalibReq_a5f335f445b573d868c1f2b900b029db4}{y}}
+\begin{DoxyCompactList}\small\item\em the y-\/coordinate. \end{DoxyCompactList}\item 
+\mbox{\label{classCalibReq_afe51cdf867f132c03e84ff5eec91a4d3}} 
+double \mbox{\hyperlink{classCalibReq_afe51cdf867f132c03e84ff5eec91a4d3}{z}}
+\begin{DoxyCompactList}\small\item\em the z-\/coordinate. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\mbox{\hyperlink{classCalibReq}{Calib\+Req}} I\+DL structure to send/receive points. 
+
+Definition at line 25 of file Calib\+Req.\+h.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/dev/icub-\/contrib-\/iit/iol/src/iol\+Reaching\+Calibration/idl\+\_\+dox/Calib\+Req.\+h\end{DoxyCompactItemize}
