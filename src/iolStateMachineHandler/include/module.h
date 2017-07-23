@@ -71,15 +71,14 @@ protected:
     RpcServer           rpcPort;
     RpcServer           rpcHuman;
     RpcClient           rpcClassifier;
-    RpcClient           rpcMotor;
     RpcClient           rpcMotorGrasp;
     RpcClient           rpcReachCalib;
     RpcClient           rpcGet3D;
-    RpcClient           rpcMotorStop;
     RpcClient           rpcMemory;
-    StopCmdPort         rxMotorStop;
     PointedLocationPort pointedLoc;
     MemoryReporter      memoryReporter;
+
+    BufferedPort<Property>           motor;
 
     BufferedPort<Bottle>             blobExtractor;
     BufferedPort<Bottle>             histObjLocPort;
@@ -94,7 +93,6 @@ protected:
     Speaker speaker;
     Attention attention;    
     RtLocalization rtLocalization;
-    Exploration exploration;
     MemoryUpdater memoryUpdater;
     ClassifiersDataBase db;
     map<string,int> memoryIds;
@@ -108,7 +106,6 @@ protected:
     Mutex mutexGet3D;
     
     string name;
-    string camera;
     string objectToBeKinCalibrated;
     bool busy;
     bool scheduleLoadMemory;
@@ -150,7 +147,6 @@ protected:
 
     friend class Attention;
     friend class RtLocalization;
-    friend class Exploration;
     friend class MemoryUpdater;
     friend class MemoryReporter;
 
@@ -174,37 +170,23 @@ protected:
     void      burst(const string &tag="");
     void      train(const string &object, const Bottle &blobs, const int i);
     void      improve_train(const string &object, const Bottle &blobs, const int i);
-    void      home(const string &part="all");
-    void      calibTable();
-    bool      calibKinStart(const string &object, const string &hand, const Vector &x, const int recogBlob);
-    void      calibKinStop();
-    void      motorHelper(const string &cmd, const string &object);
+    void      home();
     bool      getCalibratedLocation(const string &object, string &hand, const Vector &x, Vector &y);
     Vector    applyObjectPosOffsets(const string &object, const string &hand);
-    bool      interruptableAction(const string &action, deque<string> *param, const string &object, const Vector &x,
-                                  Vector &y, const Bottle &blobs=Bottle(),const int iBlob=RET_INVALID);
-    void      point(const string &object);
     void      look(const string &object);
     void      look(const Bottle &blobs, const int i, const Bottle &options=Bottle());
     int       recognize(const string &object, Bottle &blobs, Classifier **ppClassifier=NULL);
     int       recognize(Bottle &blobs, Bottle &scores, string &object);
     void      execName(const string &object);
     void      execForget(const string &object);
-    void      execWhere(const string &object, const Bottle &blobs, const int recogBlob, Classifier *pClassifier, const string &recogType);
     void      execWhat(const Bottle &blobs, const int pointedBlob, const Bottle &scores, const string &object);
     void      execThis(const string &object, const string &detectedObject, const Bottle &blobs, const int &pointedBlob);
-    void      execExplore(const string &object);
-    void      execReinforce(const string &object, const Vector &position);
-    void      execInterruptableAction(const string &action, const string &object, const Vector &x, const Bottle &blobs, const int recogBlob);
     void      switchAttention();
     void      doLocalization();
     bool      get3DPositionFromMemory(const string &object, Vector &position, const bool lockMemory=true);
-    bool      doExploration(const string &object, const Vector &position);
     void      updateMemory();    
 
 public:
-    void      interruptMotor();
-    void      reinstateMotor(const bool saySorry=true);
     bool      configure(ResourceFinder &rf);
     bool      interruptModule();
     bool      close();

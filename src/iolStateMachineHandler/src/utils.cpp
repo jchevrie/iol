@@ -81,38 +81,6 @@ bool PointedLocationPort::getLoc(cv::Point &loc)
 
 
 /**********************************************************/
-void StopCmdPort::onRead(Bottle &b)
-{
-    if (manager!=NULL)
-    {
-        if (b.size()==2)
-        {
-            string command=b.get(0).asString().c_str();
-            double confidence=b.get(1).asDouble();
-
-            if ((command=="icub-stop-now") && (confidence>0.8))
-                manager->interruptMotor();
-        }
-    }
-}
-
-
-/**********************************************************/
-StopCmdPort::StopCmdPort()
-{
-    useCallback();
-    manager=NULL;
-}
-
-
-/**********************************************************/
-void StopCmdPort::setManager(Manager *manager)
-{
-    this->manager=manager;
-}
-
-
-/**********************************************************/
 Attention::Attention() : RateThread(4000)
 {
     manager=NULL;
@@ -177,43 +145,6 @@ bool RtLocalization::threadInit()
 void RtLocalization::run()
 {
     manager->doLocalization();
-}
-
-
-/**********************************************************/
-Exploration::Exploration() : RateThread(30)
-{
-    manager=NULL;
-}
-
-
-/**********************************************************/
-void Exploration::setManager(Manager *manager)
-{
-    this->manager=manager;
-}
-
-
-/**********************************************************/
-void Exploration::setInfo(const string &object,
-                          const Vector &position)
-{
-    this->object=object;
-    this->position=position;
-}
-
-
-/**********************************************************/
-bool Exploration::threadInit()
-{
-    return (manager!=NULL);
-}
-
-
-/**********************************************************/
-void Exploration::run()
-{
-    manager->doExploration(object,position);
 }
 
 

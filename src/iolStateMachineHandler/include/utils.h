@@ -63,20 +63,6 @@ public:
 
 
 /**********************************************************/
-class StopCmdPort : public BufferedPort<Bottle>
-{
-protected:
-    Manager *manager;
-
-    void onRead(Bottle &b);
-
-public:
-    StopCmdPort();
-    void setManager(Manager *manager);
-};
-
-
-/**********************************************************/
 class Attention : public RateThread
 {
 protected:
@@ -104,24 +90,6 @@ protected:
 public:
     RtLocalization();
     void setManager(Manager *manager);
-};
-
-
-/**********************************************************/
-class Exploration : public RateThread
-{
-protected:
-    Manager *manager;
-    string   object;
-    Vector   position;
-    
-    bool threadInit();
-    void run();
-
-public:
-    Exploration();    
-    void setManager(Manager *manager);
-    void setInfo(const string &object, const Vector &position);
 };
 
 

@@ -38,26 +38,6 @@ The commands sent as bottles to the module port
 format: [home] \n
 action: brings the robot back to its resting state.
 
-<b>CALIB_TABLE</b> \n
-format: [cata] \n
-action: let the robot discover the table height.
-
-<b>CALIB_KINEMATICS</b> \n
-This command is splitted in two consecutive sub-commands:
-
-format subcmd1: [caki] [start] [left]/[right] "object" \n
-action: the robot reaches the object "object" with the
-specified hand and waits for the interaction with human based on
-force control in order to store the kinematic offsets corresponding
-to the given object.
-
-format subcmd2: [caki] [stop] \n
-action: terminate the calibration phase.
-
-<b>TRACK</b> \n
-format: [track] [start]/[stop] \n
-action: let the robot track any moving object.
-
 <b>NAME</b> \n
 format: [name] "object" \n
 action: let the robot learn a name to be associated with the
@@ -67,13 +47,6 @@ object that was tracked right before.
 format: [forget] "object" \n
 action: remove the object from the internal memory. \n
 The special key "all" is used to purge the whole memory.
-
-<b>WHERE</b> \n
-format: [where] "object" \n
-action: ask the robot to point at the given object. \n
-If no_object/wrong is recognized then the robot enters the
-learning phase, where further commands are envisaged: i.e. [ack],
-[nack], [skip], ...
 
 <b>WHAT</b> \n
 format: [what] \n
@@ -88,21 +61,6 @@ action: tell the robot the name of the pointed object. \n
 In case the option "click" is specified, then the location clicked
 in the clickable viewer will be used rather than the one resulting
 from the pointing action.
-
-<b>EXPLORE</b> \n
-format: [explore] "object" \n
-action: let the robot explore the object from many different
-view points in order to improve its knowledge.
-
-<b>REINFORCE</b> \n
-format: [reinforce] "object" (<x> <y> <z>) \n
-action: let the robot improve the recognition rate of the
-specified object whose 3d coordinates are provided.
-
-<b>MOTOR_COMMANDS</b> \n
-format: [take]/[push]/[touch]/[hold]/[drop] "object" \n
-action: ask the robot to perform some motor commands on the
-given object.
 
 <b>ATTENTION</b> \n
 format: [attention] [start]/[stop] \n
