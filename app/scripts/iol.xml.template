@@ -119,12 +119,12 @@
         </module>
 
         <connection>
-                <from>/icub/camcalib/left/out</from>
+                <from>/depthCamera/rgbImage:o</from>
                 <to>/iolStateMachineHandler/img:i</to>
                 <protocol>udp</protocol>
         </connection>
         <connection>
-                <from>/icub/camcalib/left/out</from>
+                <from>/depthCamera/rgbImage:o</from>
                 <to>/lbpExtract/image:i</to>
                 <protocol>udp</protocol>
         </connection>
@@ -134,12 +134,12 @@
                 <protocol>tcp</protocol>
         </connection>
         <connection>
-                <from>/icub/camcalib/left/out</from>
+                <from>/depthCamera/rgbImage:o</from>
                 <to>/blobSelector/img:i</to>
                 <protocol>udp</protocol>
         </connection>
         <connection>
-                <from>/icub/camcalib/left/out</from>
+                <from>/depthCamera/rgbImage:o</from>
                 <to>/motionCUT/img:i</to>
                 <protocol>udp</protocol>
         </connection>

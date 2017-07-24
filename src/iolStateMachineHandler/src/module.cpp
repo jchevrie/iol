@@ -266,7 +266,7 @@ bool Manager::get3DPosition(const cv::Point &point, Vector &x)
         mutexGet3D.unlock();
 
         Bottle *points=reply.get(0).asList();
-        if (points!=nullptr)
+        if (points!=NULL)
         {
             Bottle *point=points->get(0).asList();
             if (point->size()>0)
