@@ -290,7 +290,7 @@ bool Manager::get3DPosition(const cv::Point &point, Vector &x)
             yError()<<"Problems in receiving reply from depth camera";
     }
 
-    yInfo()<<"x "<<x.toString();
+    yInfo()<<"x=("<<x.toString(3,3)<<")";
 
     return (norm(x)>0.0);
 }
