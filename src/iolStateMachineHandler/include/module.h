@@ -173,7 +173,6 @@ protected:
     void      improve_train(const string &object, const Bottle &blobs, const int i);
     void      home();
     Vector    applyObjectPosOffsets(const string &object, const string &hand);
-    void      look(const string &object);
     void      look(const Bottle &blobs, const int i, const Bottle &options=Bottle());
     int       recognize(const string &object, Bottle &blobs, Classifier **ppClassifier=NULL);
     int       recognize(Bottle &blobs, Bottle &scores, string &object);

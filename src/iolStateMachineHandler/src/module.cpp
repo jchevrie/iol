@@ -833,30 +833,6 @@ void Manager::home()
     cmd.put("target-location",b.get(0));
 
     motor.writeStrict();
-
-    Time::delay(4.0);
-}
-
-
-/**********************************************************/
-void Manager::look(const string &object)
-{
-    Vector x;
-    get3DPositionFromMemory(object,x,false);
-
-    Bottle b;
-    b.addList().read(x);
-
-    Property &cmd=motor.prepare();
-    cmd.clear();
-
-    cmd.put("control-frame","depth");
-    cmd.put("target-type","cartesian");
-    cmd.put("target-location",b.get(0));
-
-    motor.writeStrict();
-
-    Time::delay(4.0);
 }
 
 
@@ -882,8 +858,6 @@ void Manager::look(const Bottle &blobs, const int i,
     cmd.put("target-location",b.get(0));
 
     motor.writeStrict();
-
-    Time::delay(4.0);
 }
 
 
