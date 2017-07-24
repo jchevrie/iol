@@ -72,7 +72,6 @@ protected:
     RpcServer           rpcHuman;
     RpcClient           rpcClassifier;
     RpcClient           rpcMotorGrasp;
-    RpcClient           rpcReachCalib;
     RpcClient           rpcGet3D;
     RpcClient           rpcMemory;
     PointedLocationPort pointedLoc;
@@ -83,6 +82,7 @@ protected:
     BufferedPort<Bottle>             blobExtractor;
     BufferedPort<Bottle>             histObjLocPort;
     BufferedPort<Property>           recogTriggerPort;
+    BufferedPort<Property >          cerGazePort;
     BufferedPort<ImageOf<PixelBgr> > imgIn;
     BufferedPort<ImageOf<PixelBgr> > imgOut;
     BufferedPort<ImageOf<PixelBgr> > imgRtLocOut;
@@ -156,6 +156,7 @@ protected:
     Bottle    getBlobs();
     cv::Point getBlobCOG(const Bottle &blobs, const int i);
     bool      get3DPosition(const cv::Point &point, Vector &x);
+    void      fromCameraToRoot(Vector &x_to_be_rotated);
     void      acquireImage(const bool rtlocalization=false);
     void      drawBlobs(const Bottle &blobs, const int i, Bottle *scores=NULL);
     void      rotate(cv::Mat &src, const double angle, cv::Mat &dst);
@@ -171,7 +172,6 @@ protected:
     void      train(const string &object, const Bottle &blobs, const int i);
     void      improve_train(const string &object, const Bottle &blobs, const int i);
     void      home();
-    bool      getCalibratedLocation(const string &object, string &hand, const Vector &x, Vector &y);
     Vector    applyObjectPosOffsets(const string &object, const string &hand);
     void      look(const string &object);
     void      look(const Bottle &blobs, const int i, const Bottle &options=Bottle());

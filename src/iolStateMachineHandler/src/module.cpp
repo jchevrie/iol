@@ -246,7 +246,6 @@ cv::Point Manager::getBlobCOG(const Bottle &blobs, const int i)
 /**********************************************************/
 bool Manager::get3DPosition(const cv::Point &point, Vector &x)
 {
-    // TBC for R1
     x.resize(3,0.0);
     if (rpcGet3D.getOutputCount()>0)
     {
@@ -257,7 +256,7 @@ bool Manager::get3DPosition(const cv::Point &point, Vector &x)
         Bottle &vector=content.addList();
         vector.addDouble(point.x);
         vector.addDouble(point.y);
-
+        cmd.addInt(0);
 
         mutexGet3D.lock();
         yInfo("Sending get3D query: %s",cmd.toString().c_str());
@@ -278,6 +277,8 @@ bool Manager::get3DPosition(const cv::Point &point, Vector &x)
                     x[0]=in->get(0).asDouble();
                     x[1]=in->get(1).asDouble();
                     x[2]=in->get(2).asDouble();
+
+                    fromCameraToRoot(x);
                 }
                 else
                     yError()<<"Wrong 3D point dimensions";
@@ -289,7 +290,48 @@ bool Manager::get3DPosition(const cv::Point &point, Vector &x)
             yError()<<"Problems in receiving reply from depth camera";
     }
 
+    yInfo()<<"x "<<x.toString();
+
     return (norm(x)>0.0);
+}
+
+/***********************************************************************/
+void Manager::fromCameraToRoot(Vector &x_to_be_rotated)
+{
+    Property *frame_info=cerGazePort.read(false);
+    Vector x(3);
+    Vector o(4);
+
+    if (frame_info!=NULL)
+    {
+        Bottle &pose_b=frame_info->findGroup("depth");
+        Bottle *pose=pose_b.get(1).asList();
+        x[0]=pose->get(0).asDouble();
+        x[1]=pose->get(1).asDouble();
+        x[2]=pose->get(2).asDouble();
+        
+        o[0]=pose->get(3).asDouble();
+        o[1]=pose->get(4).asDouble();
+        o[2]=pose->get(5).asDouble();
+        o[3]=pose->get(6).asDouble();
+
+        Matrix H;
+        H.resize(4,4);
+        H=axis2dcm(o);
+        H.setSubcol(x,0,3);
+        H(3,3)=1;
+        
+        if ((norm(x)>0.0) && (norm(o)>0.0))
+        {           
+            Vector aux;
+            aux.resize(4,1.0);
+            aux.setSubvector(0,x_to_be_rotated);
+
+            x_to_be_rotated=(H*aux).subVector(0,2);        
+        }
+    }
+    else
+      yError()<<"Frame info null";
 }
 
 
@@ -719,33 +761,6 @@ void Manager::improve_train(const string &object, const Bottle &blobs,
 
 
 /**********************************************************/
-bool Manager::getCalibratedLocation(const string &object,
-                                    string &hand,
-                                    const Vector &x,
-                                    Vector &y)
-{
-    hand=(x[1]>0.0?"right":"left");
-    if (rpcReachCalib.getOutputCount()>0)
-    {
-        Bottle cmd,rep; 
-        cmd.addString("get_location");
-        cmd.addString(hand);
-        cmd.addString(object);
-        cmd.addString("iol-"+hand);
-        rpcReachCalib.write(cmd,rep);
-
-        y.resize(3);
-        y[0]=rep.get(1).asDouble();
-        y[1]=rep.get(2).asDouble();
-        y[2]=rep.get(3).asDouble();
-        return true;
-    }
-
-    return false;
-}
-
-
-/**********************************************************/
 Vector Manager::applyObjectPosOffsets(const string &object,
                                       const string &hand)
 {
@@ -804,16 +819,17 @@ Vector Manager::applyObjectPosOffsets(const string &object,
 /**********************************************************/
 void Manager::home()
 {
+    Vector x(3,0.0);
+    x[0]=0.3; x[2]=0.6;
+
     Bottle b;
-    Bottle &bl=b.addList();
-    bl.addInt(0.0);     // azimuth
-    bl.addInt(-20.0);   // elevation
+    b.addList().read(x);
 
     Property &cmd=motor.prepare();
     cmd.clear();
 
     cmd.put("control-frame","depth");
-    cmd.put("target-type","angular");
+    cmd.put("target-type","cartesian");
     cmd.put("target-location",b.get(0));
 
     motor.writeStrict();
@@ -1922,11 +1938,12 @@ bool Manager::configure(ResourceFinder &rf)
     histObjLocPort.open(("/"+name+"/histObjLocation:i").c_str());
     recogTriggerPort.open(("/"+name+"/recog:o").c_str());
 
+    cerGazePort.open(("/"+name+"/gaze:i").c_str());
+
     rpcPort.open(("/"+name+"/rpc").c_str());
     rpcHuman.open(("/"+name+"/human:rpc").c_str());
     rpcClassifier.open(("/"+name+"/classify:rpc").c_str());
     rpcMotorGrasp.open(("/"+name+"/motor_grasp:rpc").c_str());
-    rpcReachCalib.open(("/"+name+"/reach_calib:rpc").c_str());
     rpcGet3D.open(("/"+name+"/get3d:rpc").c_str());
     motor.open(("/"+name+"/motor:o").c_str());
 
@@ -2060,7 +2077,6 @@ bool Manager::interruptModule()
     blobExtractor.interrupt();
     rpcClassifier.interrupt();
     rpcMotorGrasp.interrupt();
-    rpcReachCalib.interrupt();
     rpcGet3D.interrupt();
     pointedLoc.interrupt();
     speaker.interrupt();
@@ -2091,12 +2107,12 @@ bool Manager::close()
     blobExtractor.close();
     rpcClassifier.close();
     rpcMotorGrasp.close();
-    rpcReachCalib.close();
     rpcGet3D.close();
     pointedLoc.close();
     speaker.close();
     rpcMemory.close();
     motor.close();
+    cerGazePort.close();
 
     // dispose filters used for scores histogram
     for (map<string,Filter*>::iterator it=histFiltersPool.begin();

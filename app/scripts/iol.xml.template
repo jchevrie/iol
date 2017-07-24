@@ -11,16 +11,25 @@
         </module>
         <module>
                <name>yarpdev</name>
-               <parameters> --from sensors/Xtion_depthCamera.ini </parameters>
+               <parameters> --from sensors/Xtion_depthCamera_noMirror.ini </parameters>
                <node>r1-torso</node>
         </module>
         <module>
+               <name>RGBD2pointCloud</name>
+               <parameters> --remoteImagePort /depthCamera/rgbImage:o --remoteDepthPort /depthCamera/depthImage:o </parameters>
+               <node>r1-console-linux</node>
+        </module>
+        <module>
                 <name>lbpExtract</name>
-                <node>pwrNode1</node>
+                <node>r1-console-linux</node>
         </module>
         <module>
                 <name>motionCUT</name>
-                <node>pwrNode2</node>
+                <node>r1-console-linux</node>
+        </module>
+        <module>
+                <name>blobSelector</name>
+                <node>r1-console-linux</node>
         </module>
         <module>
                 <name>caffeCoder</name>
@@ -33,29 +42,21 @@
         </module>
         <module>
                 <name>himrepClassifier</name>
-                <node>gpuNode1</node>
-        </module>
-        <module>
-                <name>blobSelector</name>
-                <node>pwrNode3</node>
-        </module>
-        <module>
-                <name>iolReachingCalibration</name>
-                <node>pwrNode4</node>
+                <node>r1-console-linux</node>
         </module>
         <module>
                 <name>iolStateMachineHandler</name>
-                <node>pwrNode4</node>
+                <node>r1-console-linux</node>
         </module>
         <module>
                 <name>cer_gaze-controller</name>
-                <parameters>--T 0.8 --cameras::context cameraCalibration --cameras::file cerEyes_320x240.ini --joints-limits::pitch "(-20.0 20.0)" --joints-limits::yaw "(-40.0 40.0)"</parameters>
+                <parameters>--T 0.8 --cameras::context cameraCalibration --cameras::file cerEyes_320x240.ini</parameters>
                 <node>r1-base</node>
         </module>
         <module>
                 <name>objectsPropertiesCollector</name>
                 <parameters>--name memory --db memory_iol.ini</parameters>
-                <node>pwrNode5</node>
+                <node>r1-console-linux</node>
         </module>
         <module>
                 <name>iSpeak</name>
@@ -63,59 +64,43 @@
                 <node>r1-face</node>
         </module>
         <module>
-                <name>speechRecognizer</name>
-                <node>winNode1</node>
-        </module>
-        <module>
                 <name>iolHelper</name>
-                <node>console</node>
+                <node>r1-console-linux</node>
         </module>
         <module>
                 <name>yarpview</name>
                 <parameters>--name /iolViewer/disparity --x 0 --y 0 --p 50 --compact</parameters>
-                <node>console</node>
+                <node>r1-console-linux</node>
         </module>
         <module>
                 <name>yarpview</name>
                 <parameters>--name /iolViewer/lbpSegmented --x 370 --y 0 --p 50 --compact</parameters>
-                <node>console</node>
+                <node>r1-console-linux</node>
         </module>
         <module>
                 <name>yarpview</name>
                 <parameters>--name /iolViewer/manager/snapshot --x 370 --y 720 --p 50 --compact</parameters>
-                <node>console</node>
+                <node>r1-console-linux</node>
         </module>
         <module>
                 <name>yarpview</name>
                 <parameters>--name /iolViewer/pointedBlobs --x 0 --y 720 --p 50 --compact</parameters>
-                <node>console</node>
+                <node>r1-console-linux</node>
         </module>
         <module>
                 <name>yarpview</name>
                 <parameters>--name /iolViewer/manager/tracker --x 0 --y 370 --p 50 --compact</parameters>
-                <node>console</node>
+                <node>r1-console-linux</node>
         </module>
         <module>
                 <name>yarpview</name>
                 <parameters>--name /iolViewer/manager/localizer --x 370 --y 370 --out /iolViewer/manager/localizer/out --p 50 --compact</parameters>
-                <node>console</node>
+                <node>r1-console-linux</node>
         </module>
         <module>
                 <name>yarpview</name>
                 <parameters>--name /iolViewer/manager/histogram --x 680 --y 220 --w 600 --h 600 --p 50 --compact</parameters>
-                <node>console</node>
-        </module>
-
-        <module>
-            <name>rfsmGui</name>
-            <node>console</node>
-            <parameters>--rfsm iol_root_fsm.lua --context iol/lua --run</parameters>
-            <dependencies>
-                <port timeout="10">/iSpeak</port>
-                <port timeout="10">/speechRecognizer/rpc</port>
-                <port timeout="10">/iolStateMachineHandler/human:rpc</port>
-                <port timeout="10">/iolHelper/rpc</port>
-            </dependencies>
+                <node>r1-console-linux</node>
         </module>
 
         <connection>
@@ -179,6 +164,11 @@
                 <protocol>udp</protocol>
         </connection>
         <connection>
+                <from>/depthCamera/depthImage:o</from>
+                <to>/iolViewer/disparity</to>
+                <protocol> udp+recv.portmonitor+type.dll+file.depthimage </protocol>
+        </connection>
+        <connection>
                 <from>/iolStateMachineHandler/imgLoc:o</from>
                 <to>/iolViewer/manager/localizer</to>
                 <protocol>tcp</protocol>
@@ -199,16 +189,6 @@
                 <protocol>tcp</protocol>
         </connection>
         <connection>
-                <from>/iolReachingCalibration/opc</from>
-                <to>/memory/rpc</to>
-                <protocol>tcp</protocol>
-        </connection>
-        <connection>
-                <from>/iolStateMachineHandler/reach_calib:rpc</from>
-                <to>/iolReachingCalibration/rpc</to>
-                <protocol>tcp</protocol>
-        </connection>
-        <connection>
                 <from>/iolStateMachineHandler/memory:rpc</from>
                 <to>/memory/rpc</to>
                 <protocol>tcp</protocol>
@@ -219,23 +199,8 @@
                 <protocol>tcp</protocol>
         </connection>
         <connection>
-                <from>/speechRecognizer/recog/continuous:o</from>
-                <to>/iolStateMachineHandler/motor_stop:i</to>
-                <protocol>tcp</protocol>
-        </connection>
-        <connection>
                 <from>/blobSelector/point:o</from>
                 <to>/iolStateMachineHandler/point:i</to>
-                <protocol>tcp</protocol>
-        </connection>
-        <connection>
-                <from>/speechRecognizer/tts/iSpeak:o</from>
-                <to>/iSpeak</to>
-                <protocol>tcp</protocol>
-        </connection>
-        <connection>
-                <from>/iSpeak/emotions:o</from>
-                <to>/icub/face/emotions/in</to>
                 <protocol>tcp</protocol>
         </connection>
         <connection>
@@ -243,7 +208,7 @@
                 <to>/caffeCoder/img:i</to>
                 <protocol>tcp</protocol>
         </connection>
-        <connection>
+        <connection>/c
                 <from>/caffeCoder/code:o</from>
                 <to>/himrepClassifier/features:i</to>
                 <protocol>tcp</protocol>
@@ -281,6 +246,11 @@
         <connection>
                 <from>/iolStateMachineHandler/get3d:rpc</from>
                 <to>/RGBD2PointCloud/rpc</to>
+                <protocol>tcp</protocol>
+        </connection>
+        <connection>
+                <from>/cer_gaze-controller/state:o</from>
+                <to>/iolStateMachineHandler/gaze:i</to>
                 <protocol>tcp</protocol>
         </connection>
         <connection>
