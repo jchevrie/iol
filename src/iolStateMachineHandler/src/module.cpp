@@ -250,16 +250,14 @@ bool Manager::get3DPosition(const cv::Point &point, Vector &x)
     x.resize(3,0.0);
     if (rpcGet3D.getOutputCount()>0)
     {
-        // thanks to SFM we are here
-        // safe against borders checking
-        // command format: Rect tlx tly w h step
-        Bottle cmd,reply;
-        cmd.addString("Rect");
-        cmd.addInt(point.x-3);
-        cmd.addInt(point.y-3);
-        cmd.addInt(7);
-        cmd.addInt(7);
-        cmd.addInt(2);
+        //New command for getting 3D point from depth camera
+        Bottle cmd, reply;
+        cmd.addString("get_3D_points");
+        Bottle &content=cmd.addList();
+        Bottle &vector=content.addList();
+        vector.addDouble(point.x);
+        vector.addDouble(point.y);
+
 
         mutexGet3D.lock();
         yInfo("Sending get3D query: %s",cmd.toString().c_str());
@@ -267,32 +265,28 @@ bool Manager::get3DPosition(const cv::Point &point, Vector &x)
         yInfo("Received blob cartesian coordinates: %s",reply.toString().c_str());
         mutexGet3D.unlock();
 
-        int sz=reply.size();
-        if ((sz>0) && ((sz%3)==0))
+        Bottle *points=reply.get(0).asList();
+        if (points!=nullptr)
         {
-            Vector tmp(3);
-            int cnt=0;
-
-            for (int i=0; i<sz; i+=3)
+            Bottle *point=points->get(0).asList();
+            if (point->size()>0)
             {
-                tmp[0]=reply.get(i+0).asDouble();
-                tmp[1]=reply.get(i+1).asDouble();
-                tmp[2]=reply.get(i+2).asDouble();
+                Bottle *in=point->get(0).asList();
 
-                if (norm(tmp)>0.0)
+                if (in->size()>0)
                 {
-                    x+=tmp;
-                    cnt++;
+                    x[0]=in->get(0).asDouble();
+                    x[1]=in->get(1).asDouble();
+                    x[2]=in->get(2).asDouble();
                 }
+                else
+                    yError()<<"Wrong 3D point dimensions";
             }
-
-            if (cnt>0)
-                x/=cnt;
             else
-                yWarning("get3DPosition failed");
+                yError()<<"No point received from depth camera";
         }
         else
-            yError("SFM replied with wrong size");
+            yError()<<"Problems in receiving reply from depth camera";
     }
 
     return (norm(x)>0.0);

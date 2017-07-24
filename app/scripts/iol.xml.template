@@ -279,6 +279,11 @@
                 <protocol>tcp</protocol>
         </connection>
         <connection>
+                <from>/iolStateMachineHandler/get3d:rpc</from>
+                <to>/RGBD2PointCloud/rpc</to>
+                <protocol>tcp</protocol>
+        </connection>
+        <connection>
                 <from>/iSpeak/speech-dev/rpc</from>
                 <to>/r1/speech:rpc</to>
                 <protocol>tcp</protocol>
