@@ -145,6 +145,8 @@ protected:
     Vector skim_blobs_y_bounds;
     Vector histObjLocation;
 
+    Matrix H;
+
     friend class Attention;
     friend class RtLocalization;
     friend class MemoryUpdater;

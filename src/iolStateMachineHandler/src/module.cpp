@@ -299,8 +299,8 @@ bool Manager::get3DPosition(const cv::Point &point, Vector &x)
 void Manager::fromCameraToRoot(Vector &x_to_be_rotated)
 {
     Property *frame_info=cerGazePort.read(false);
-    Vector x(3);
-    Vector o(4);
+    Vector x(3, 0.0);
+    Vector o(4, 0.0);
 
     if (frame_info!=NULL)
     {
@@ -314,24 +314,17 @@ void Manager::fromCameraToRoot(Vector &x_to_be_rotated)
         o[1]=pose->get(4).asDouble();
         o[2]=pose->get(5).asDouble();
         o[3]=pose->get(6).asDouble();
-
-        Matrix H;
-        H.resize(4,4);
+ 
         H=axis2dcm(o);
         H.setSubcol(x,0,3);
         H(3,3)=1;
-        
-        if ((norm(x)>0.0) && (norm(o)>0.0))
-        {           
-            Vector aux;
-            aux.resize(4,1.0);
-            aux.setSubvector(0,x_to_be_rotated);
-
-            x_to_be_rotated=(H*aux).subVector(0,2);        
-        }
     }
-    else
-      yError()<<"Frame info null";
+                
+    Vector aux;
+    aux.resize(4,1.0);
+    aux.setSubvector(0,x_to_be_rotated);
+
+    x_to_be_rotated=(H*aux).subVector(0,2);               
 }
 
 
@@ -2030,6 +2023,8 @@ bool Manager::configure(ResourceFinder &rf)
     histColorsCode.push_back(cv::Scalar( 71,196,249));
     histColorsCode.push_back(cv::Scalar(224,176, 96));
     histColorsCode.push_back(cv::Scalar( 22,118,238));
+
+    H=eye(4,4);
 
     return true;
 }
