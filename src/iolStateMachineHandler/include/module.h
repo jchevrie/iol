@@ -82,12 +82,12 @@ protected:
     BufferedPort<Bottle>             blobExtractor;
     BufferedPort<Bottle>             histObjLocPort;
     BufferedPort<Property>           recogTriggerPort;
-    BufferedPort<Property >          cerGazePort;
-    BufferedPort<ImageOf<PixelBgr> > imgIn;
-    BufferedPort<ImageOf<PixelBgr> > imgOut;
-    BufferedPort<ImageOf<PixelBgr> > imgRtLocOut;
-    BufferedPort<ImageOf<PixelBgr> > imgTrackOut;
-    BufferedPort<ImageOf<PixelBgr> > imgHistogram;
+    BufferedPort<Property>           cerGazePort;
+    BufferedPort<ImageOf<PixelRgb> > imgIn;
+    BufferedPort<ImageOf<PixelRgb> > imgOut;
+    BufferedPort<ImageOf<PixelRgb> > imgRtLocOut;
+    BufferedPort<ImageOf<PixelRgb> > imgTrackOut;
+    BufferedPort<ImageOf<PixelRgb> > imgHistogram;
     Port imgClassifier;
 
     Speaker speaker;
@@ -97,8 +97,8 @@ protected:
     ClassifiersDataBase db;
     map<string,int> memoryIds;
 
-    ImageOf<PixelBgr> img;
-    ImageOf<PixelBgr> imgRtLoc;
+    ImageOf<PixelRgb> img;
+    ImageOf<PixelRgb> imgRtLoc;
     Mutex mutexResources;
     Mutex mutexResourcesMemory;
     Mutex mutexAttention;
@@ -158,7 +158,7 @@ protected:
     Bottle    getBlobs();
     cv::Point getBlobCOG(const Bottle &blobs, const int i);
     bool      get3DPosition(const cv::Point &point, Vector &x);
-    void      fromCameraToRoot(Vector &x_to_be_rotated);
+    Vector    fromCameraToRoot(const Vector &x);
     void      acquireImage(const bool rtlocalization=false);
     void      drawBlobs(const Bottle &blobs, const int i, Bottle *scores=NULL);
     void      rotate(cv::Mat &src, const double angle, cv::Mat &dst);

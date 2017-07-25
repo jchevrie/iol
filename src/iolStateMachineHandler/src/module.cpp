@@ -271,14 +271,12 @@ bool Manager::get3DPosition(const cv::Point &point, Vector &x)
             if (point->size()>0)
             {
                 Bottle *in=point->get(0).asList();
-
                 if (in->size()>0)
                 {
                     x[0]=in->get(0).asDouble();
                     x[1]=in->get(1).asDouble();
                     x[2]=in->get(2).asDouble();
-
-                    fromCameraToRoot(x);
+                    x=fromCameraToRoot(x);
                 }
                 else
                     yError()<<"Wrong 3D point dimensions";
@@ -291,40 +289,40 @@ bool Manager::get3DPosition(const cv::Point &point, Vector &x)
     }
 
     yInfo()<<"x=("<<x.toString(3,3)<<")";
-
     return (norm(x)>0.0);
 }
 
-/***********************************************************************/
-void Manager::fromCameraToRoot(Vector &x_to_be_rotated)
+
+/**********************************************************/
+Vector Manager::fromCameraToRoot(const Vector &x)
 {
-    Property *frame_info=cerGazePort.read(false);
-    Vector x(3, 0.0);
-    Vector o(4, 0.0);
-
-    if (frame_info!=NULL)
+    if (Property *frame_info=cerGazePort.read(false))
     {
-        Bottle &pose_b=frame_info->findGroup("depth");
-        Bottle *pose=pose_b.get(1).asList();
-        x[0]=pose->get(0).asDouble();
-        x[1]=pose->get(1).asDouble();
-        x[2]=pose->get(2).asDouble();
-        
-        o[0]=pose->get(3).asDouble();
-        o[1]=pose->get(4).asDouble();
-        o[2]=pose->get(5).asDouble();
-        o[3]=pose->get(6).asDouble();
- 
-        H=axis2dcm(o);
-        H.setSubcol(x,0,3);
-        H(3,3)=1;
-    }
-                
-    Vector aux;
-    aux.resize(4,1.0);
-    aux.setSubvector(0,x_to_be_rotated);
+        if (Bottle *pose=frame_info->find("depth").asList())
+        {
+            Vector p(3);
+            p[0]=pose->get(0).asDouble();
+            p[1]=pose->get(1).asDouble();
+            p[2]=pose->get(2).asDouble();
 
-    x_to_be_rotated=(H*aux).subVector(0,2);               
+            Vector o(4);
+            o[0]=pose->get(3).asDouble();
+            o[1]=pose->get(4).asDouble();
+            o[2]=pose->get(5).asDouble();
+            o[3]=pose->get(6).asDouble();
+
+            H=axis2dcm(o);
+            H.setSubcol(p,0,3);
+        }
+     }
+
+    Vector y=x;
+    if (y.length()<4)
+        y.push_back(1.0);
+    else
+        y[3]=1.0;
+
+    return (H*y).subVector(0,2);               
 }
 
 
@@ -335,7 +333,7 @@ void Manager::acquireImage(const bool rtlocalization)
     mutexResources.lock();
 
     // wait for incoming image
-    if (ImageOf<PixelBgr> *tmp=imgIn.read())
+    if (ImageOf<PixelRgb> *tmp=imgIn.read())
     {
         if (rtlocalization)
             imgRtLoc=*tmp;
@@ -355,14 +353,14 @@ void Manager::drawBlobs(const Bottle &blobs, const int i,
     // grab resources
     mutexResources.lock();
 
-    BufferedPort<ImageOf<PixelBgr> > *port=(scores==NULL)?&imgOut:&imgRtLocOut;
+    BufferedPort<ImageOf<PixelRgb> > *port=(scores==NULL)?&imgOut:&imgRtLocOut;
     if (port->getOutputCount()>0)
     {
         cv::Scalar highlight(0,255,0);
         cv::Scalar lowlight(150,125,125);            
 
         // latch image
-        ImageOf<PixelBgr> img=(scores==NULL)?this->img:this->imgRtLoc;
+        ImageOf<PixelRgb> img=(scores==NULL)?this->img:this->imgRtLoc;
         cv::Mat imgMat=cv::cvarrToMat(img.getIplImage());
         for (int j=0; j<blobs.size(); j++)
         {
@@ -422,7 +420,7 @@ void Manager::drawScoresHistogram(const Bottle &blobs,
         mutexResources.lock();
 
         // create image containing histogram
-        ImageOf<PixelBgr> imgConf;
+        ImageOf<PixelRgb> imgConf;
         imgConf.resize(600,600); imgConf.zero();
 
         // opencv wrappers
@@ -495,14 +493,14 @@ void Manager::drawScoresHistogram(const Bottle &blobs,
             sz.y=br.y-tl.y;            
 
             // copy the blob
-            ImageOf<PixelBgr> imgTmp1;
+            ImageOf<PixelRgb> imgTmp1;
             imgTmp1.resize(sz.x,sz.y);
             cv::Mat imgRtLocRoi(imgRtLocMat,cv::Rect(tl.x,tl.y,sz.x,sz.y));
             cv::Mat imgTmp1Mat=cv::cvarrToMat(imgTmp1.getIplImage());
             imgRtLocRoi.copyTo(imgTmp1Mat);
 
             // resize the blob
-            ImageOf<PixelBgr> imgTmp2;
+            ImageOf<PixelRgb> imgTmp2;
             int magFact=2;  // magnifying factor
             imgTmp2.resize(magFact*imgTmp1.width(),magFact*imgTmp1.height());
             cv::Mat imgTmp2Mat=cv::cvarrToMat(imgTmp2.getIplImage());
@@ -672,7 +670,7 @@ void Manager::train(const string &object, const Bottle &blobs,
 
     if (trainOnFlipped && (i>=0))
     {
-        ImageOf<PixelBgr> imgFlipped=img;
+        ImageOf<PixelRgb> imgFlipped=img;
         cv::Mat imgFlippedMat=cv::cvarrToMat(imgFlipped.getIplImage());
 
         if (Bottle *item=blobs.get(i).asList())
@@ -1468,7 +1466,7 @@ void Manager::updateMemory()
         }
 
         // latch image
-        ImageOf<PixelBgr> &imgLatch=imgTrackOut.prepare();
+        ImageOf<PixelRgb> &imgLatch=imgTrackOut.prepare();
         cv::Mat imgLatchMat=cv::cvarrToMat(imgLatch.getIplImage());
 
         mutexResourcesMemory.lock();
