@@ -106,12 +106,12 @@
         <connection>
                 <from>/depthCamera/rgbImage:o</from>
                 <to>/iolStateMachineHandler/img:i</to>
-                <protocol>udp</protocol>
+                <protocol>mjpeg</protocol>
         </connection>
         <connection>
                 <from>/depthCamera/rgbImage:o</from>
                 <to>/lbpExtract/image:i</to>
-                <protocol>udp</protocol>
+                <protocol>mjpeg</protocol>
         </connection>
         <connection>
                 <from>/iolStateMachineHandler/imgClassifier:o</from>
@@ -121,12 +121,12 @@
         <connection>
                 <from>/depthCamera/rgbImage:o</from>
                 <to>/blobSelector/img:i</to>
-                <protocol>udp</protocol>
+                <protocol>mjpeg</protocol>
         </connection>
         <connection>
                 <from>/depthCamera/rgbImage:o</from>
                 <to>/motionCUT/img:i</to>
-                <protocol>udp</protocol>
+                <protocol>mjpeg</protocol>
         </connection>
         <connection>
                 <from>/motionCUT/blobs:o</from>
@@ -146,22 +146,22 @@
         <connection>
                 <from>/lbpExtract/segmentedlbp:o</from>
                 <to>/iolViewer/lbpSegmented</to>
-                <protocol>udp</protocol>
+                <protocol>mjpeg</protocol>
         </connection>
         <connection>
                 <from>/blobSelector/img:o</from>
                 <to>/iolViewer/pointedBlobs</to>
-                <protocol>udp</protocol>
+                <protocol>mjpeg</protocol>
         </connection>
         <connection>
                 <from>/iolStateMachineHandler/img:o</from>
                 <to>/iolViewer/manager/snapshot</to>
-                <protocol>tcp</protocol>
+                <protocol>mjpeg</protocol>
         </connection>
         <connection>
                 <from>/iolStateMachineHandler/imgTrack:o</from>
                 <to>/iolViewer/manager/tracker</to>
-                <protocol>udp</protocol>
+                <protocol>mjpeg</protocol>
         </connection>
         <connection>
                 <from>/depthCamera/depthImage:o</from>
@@ -171,17 +171,17 @@
         <connection>
                 <from>/iolStateMachineHandler/imgLoc:o</from>
                 <to>/iolViewer/manager/localizer</to>
-                <protocol>tcp</protocol>
+                <protocol>mjpeg</protocol>
         </connection>
         <connection>
                 <from>/iolStateMachineHandler/imgHistogram:o</from>
                 <to>/iolViewer/manager/histogram</to>
-                <protocol>tcp</protocol>
+                <protocol>mjpeg</protocol>
         </connection>
         <connection>
                 <from>/iolViewer/manager/localizer/out</from>
                 <to>/iolStateMachineHandler/histObjLocation:i</to>
-                <protocol>tcp</protocol>
+                <protocol>mjpeg</protocol>
         </connection>
         <connection>
                 <from>/iolStateMachineHandler/speak:o</from>
