@@ -357,7 +357,7 @@ void Manager::drawBlobs(const Bottle &blobs, const int i,
     if (port->getOutputCount()>0)
     {
         cv::Scalar highlight(0,255,0);
-        cv::Scalar lowlight(150,125,125);            
+        cv::Scalar lowlight(125,125,150);            
 
         // latch image
         ImageOf<PixelRgb> img=(scores==NULL)?this->img:this->imgRtLoc;
@@ -1608,9 +1608,9 @@ void Manager::updateMemory()
                     }
 
                     // highlight location of tracked blobs within images
-                    cv::rectangle(imgLatchMat,tl,br,cv::Scalar(255,0,0),2);
+                    cv::rectangle(imgLatchMat,tl,br,cv::Scalar(0,0,255),2);
                     cv::putText(imgLatchMat,object.c_str(),cv::Point(tl.x,tl.y-5),
-                                cv::FONT_HERSHEY_SIMPLEX,0.5,cv::Scalar(255,0,0),2);
+                                cv::FONT_HERSHEY_SIMPLEX,0.5,cv::Scalar(0,0,255),2);
                 }
             }
         }
@@ -2015,12 +2015,12 @@ bool Manager::configure(ResourceFinder &rf)
 
     objectToBeKinCalibrated="";
 
-    histColorsCode.push_back(cv::Scalar( 65, 47,213));
-    histColorsCode.push_back(cv::Scalar(122, 79, 58));
-    histColorsCode.push_back(cv::Scalar(154,208, 72));
-    histColorsCode.push_back(cv::Scalar( 71,196,249));
-    histColorsCode.push_back(cv::Scalar(224,176, 96));
-    histColorsCode.push_back(cv::Scalar( 22,118,238));
+    histColorsCode.push_back(cv::Scalar(213, 47, 65));
+    histColorsCode.push_back(cv::Scalar( 58, 79,122));
+    histColorsCode.push_back(cv::Scalar( 72,208,154));
+    histColorsCode.push_back(cv::Scalar(249,196, 71));
+    histColorsCode.push_back(cv::Scalar( 96,176,224));
+    histColorsCode.push_back(cv::Scalar(238,118, 22));
 
     H=eye(4,4);
 
