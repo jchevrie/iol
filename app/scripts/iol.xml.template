@@ -24,14 +24,6 @@
                 <node>r1-console-linux</node>
         </module>
         <module>
-                <name>motionCUT</name>
-                <node>r1-console-linux</node>
-        </module>
-        <module>
-                <name>blobSelector</name>
-                <node>r1-console-linux</node>
-        </module>
-        <module>
                 <name>caffeCoder</name>
                 <parameters>--from caffeCoder_resnet.ini</parameters>
                 <node>r1-torso</node>
@@ -79,16 +71,6 @@
         </module>
         <module>
                 <name>yarpview</name>
-                <parameters>--name /iolViewer/manager/snapshot --x 370 --y 720 --p 50 --compact</parameters>
-                <node>r1-console-linux</node>
-        </module>
-        <module>
-                <name>yarpview</name>
-                <parameters>--name /iolViewer/pointedBlobs --x 0 --y 720 --p 50 --compact</parameters>
-                <node>r1-console-linux</node>
-        </module>
-        <module>
-                <name>yarpview</name>
                 <parameters>--name /iolViewer/manager/tracker --x 0 --y 370 --p 50 --compact</parameters>
                 <node>r1-console-linux</node>
         </module>
@@ -119,21 +101,6 @@
                 <protocol>tcp</protocol>
         </connection>
         <connection>
-                <from>/depthCamera/rgbImage:o</from>
-                <to>/blobSelector/img:i</to>
-                <protocol>mjpeg</protocol>
-        </connection>
-        <connection>
-                <from>/depthCamera/rgbImage:o</from>
-                <to>/motionCUT/img:i</to>
-                <protocol>mjpeg</protocol>
-        </connection>
-        <connection>
-                <from>/motionCUT/blobs:o</from>
-                <to>/blobSelector/blobs:i</to>
-                <protocol>udp</protocol>
-        </connection>
-        <connection>
                 <from>/lbpExtract/blobs:o</from>
                 <to>/iolStateMachineHandler/blobs:i</to>
                 <protocol>udp</protocol>
@@ -146,16 +113,6 @@
         <connection>
                 <from>/lbpExtract/segmentedlbp:o</from>
                 <to>/iolViewer/lbpSegmented</to>
-                <protocol>mjpeg</protocol>
-        </connection>
-        <connection>
-                <from>/blobSelector/img:o</from>
-                <to>/iolViewer/pointedBlobs</to>
-                <protocol>mjpeg</protocol>
-        </connection>
-        <connection>
-                <from>/iolStateMachineHandler/img:o</from>
-                <to>/iolViewer/manager/snapshot</to>
                 <protocol>mjpeg</protocol>
         </connection>
         <connection>
@@ -196,11 +153,6 @@
         <connection>
                 <from>/iolHelper/opc</from>
                 <to>/memory/rpc</to>
-                <protocol>tcp</protocol>
-        </connection>
-        <connection>
-                <from>/blobSelector/point:o</from>
-                <to>/iolStateMachineHandler/point:i</to>
                 <protocol>tcp</protocol>
         </connection>
         <connection>
