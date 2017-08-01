@@ -138,7 +138,7 @@
         <connection>
                 <from>/iolViewer/manager/localizer/out</from>
                 <to>/iolStateMachineHandler/histObjLocation:i</to>
-                <protocol>mjpeg</protocol>
+                <protocol>tcp</protocol>
         </connection>
         <connection>
                 <from>/iolStateMachineHandler/speak:o</from>
