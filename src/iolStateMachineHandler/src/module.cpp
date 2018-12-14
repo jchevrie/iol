@@ -2033,7 +2033,7 @@ void Manager::updateMemory()
 
             if (object!=OBJECT_UNKNOWN)
             {
-                scoresMap.insert(std::make_pair(object, score));
+                scoresMap[object] = score;
 
                 // compute the bounding box
                 cv::Point tl,br;
@@ -2094,7 +2094,7 @@ void Manager::updateMemory()
                     Bottle class_score;
                     Bottle &list_score=class_score.addList();
                     list_score.addString("class_score");
-                    list_score.addDouble(scoresMap.at(object));
+                    list_score.addDouble(scoresMap[object]);
 
                     mutexResourcesMemory.lock();
                     map<string,int>::iterator id=memoryIds.find(object);
